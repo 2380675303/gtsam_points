@@ -106,7 +106,7 @@ PointCloud::Ptr
 merge_frames_auto(const std::vector<Eigen::Isometry3d>& poses, const std::vector<PointCloud::ConstPtr>& frames, double downsample_resolution) {
 //
 #ifdef GTSAM_POINTS_USE_CUDA
-  if (frames[0]->points_gpu && frames[0]->covs_gpu) {
+  if (frames[0]->points_gpu && frames[0]->covs_gpu && frames[0]->intensities_gpu) {
     return merge_frames_gpu(poses, frames, downsample_resolution);
   }
 #endif

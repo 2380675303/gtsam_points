@@ -68,20 +68,22 @@ private:
 public:
   CUstream_st* stream;
 
-  const int init_num_buckets;                   ///< Initial number of buckets
-  const double target_points_drop_rate;         ///< Allowable points drop rate
-  VoxelMapInfo voxelmap_info;                   ///< Voxelmap information
-  VoxelMapInfo* voxelmap_info_ptr;              ///< Voxelmap information on GPU memory
+  const int init_num_buckets;            ///< Initial number of buckets
+  const double target_points_drop_rate;  ///< Allowable points drop rate
+  VoxelMapInfo voxelmap_info;            ///< Voxelmap information
+  VoxelMapInfo* voxelmap_info_ptr;       ///< Voxelmap information on GPU memory
 
-  VoxelBucket* buckets;                         ///< Voxel buckets for hashing
+  VoxelBucket* buckets;  ///< Voxel buckets for hashing
 
   // voxel data
   int* num_points;               ///< Number of points in eac voxel
   Eigen::Vector3f* voxel_means;  ///< Voxel means
   Eigen::Matrix3f* voxel_covs;   ///< Voxel covariances
+  float* voxel_intensities;      ///< Voxel intensities
 };
 
 std::vector<Eigen::Vector3f> download_voxel_means(const GaussianVoxelMapGPU& voxelmap, CUstream_st* stream = nullptr);
 std::vector<Eigen::Matrix3f> download_voxel_covs(const GaussianVoxelMapGPU& voxelmap, CUstream_st* stream = nullptr);
+std::vector<float> download_voxel_intensities(const GaussianVoxelMapGPU& voxelmap, CUstream_st* stream = nullptr);
 
 }  // namespace gtsam_points
