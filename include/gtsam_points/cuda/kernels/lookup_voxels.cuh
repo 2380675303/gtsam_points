@@ -21,10 +21,10 @@ struct lookup_voxels_kernel {
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
   lookup_voxels_kernel(
-    const GaussianVoxelMapGPU& voxelmap,
-    const Eigen::Vector3f* points,
-    const Eigen::Vector3f* normals,
-    const Eigen::Isometry3f* x_ptr)
+    const GaussianVoxelMapGPU& voxelmap,    // taget
+    const Eigen::Vector3f* points,          // source
+    const Eigen::Vector3f* normals,         // source normals
+    const Eigen::Isometry3f* x_ptr)         // source to target pose
   : x_ptr(x_ptr),
     voxelmap_info_ptr(voxelmap.voxelmap_info_ptr),
     buckets_ptr(voxelmap.buckets),
@@ -35,15 +35,15 @@ struct lookup_voxels_kernel {
     const auto& info = *voxelmap_info_ptr;
 
     const Eigen::Isometry3f& trans = *x_ptr;
-    const Eigen::Vector3f& x = points_ptr[point_idx];
-    const Eigen::Vector3f transed_x = trans.linear() * x + trans.translation();
+    const Eigen::Vector3f& x = points_ptr[point_idx];                             // source point
+    const Eigen::Vector3f transed_x = trans.linear() * x + trans.translation();   // source point in target frame
 
     if (enable_surface_validation) {
-      const Eigen::Vector3f& normal = normals_ptr[point_idx];
-      const Eigen::Vector3f transed_normal = trans.linear() * normal;
+      const Eigen::Vector3f& normal = normals_ptr[point_idx];                     // source normal
+      const Eigen::Vector3f transed_normal = trans.linear() * normal;             // source normal in target frame
 
       // 0.17 = cos(10 deg)
-      if (transed_x.normalized().dot(transed_normal) > surface_validation_thresh) {
+      if (transed_x.normalized().dot(transed_normal) > surface_validation_thresh) { // angle between direction and normal below 10 deg
         return thrust::make_pair(-1, -1);
       }
     }
